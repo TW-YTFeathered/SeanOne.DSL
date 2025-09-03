@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36414.22 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeanOne.DSL", "SeanOne.DSL.csproj", "{EE2E04DE-3074-4BD3-9158-7CF2C1EEC817}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EE2E04DE-3074-4BD3-9158-7CF2C1EEC817}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE2E04DE-3074-4BD3-9158-7CF2C1EEC817}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE2E04DE-3074-4BD3-9158-7CF2C1EEC817}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE2E04DE-3074-4BD3-9158-7CF2C1EEC817}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {462008C2-85E6-469E-BD4A-B6B715A499F7}
+	EndGlobalSection
+EndGlobal
