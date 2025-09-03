@@ -6,7 +6,7 @@ using System.Text;
 
 namespace SeanOne.DSL
 {
-    public class CodeTranslator
+    public class DSL
     {
         // 主執行方法
         public static string Run(object obj, string code)
