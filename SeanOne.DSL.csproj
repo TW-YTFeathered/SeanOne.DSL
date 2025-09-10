@@ -2,8 +2,16 @@
 
   <PropertyGroup>
     <TargetFrameworks>net472;net48;net6.0;netstandard2.0;</TargetFrameworks>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Version>1.0.0</Version>
+    <Copyright></Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <PackageReadmeFile>Nuget_README.md</PackageReadmeFile>
   </PropertyGroup>
-
+	
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0|AnyCPU'">
 	<DebugType>none</DebugType>
   </PropertyGroup>
@@ -39,5 +47,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
 	<DebugType>none</DebugType>
   </PropertyGroup>
+
+  <ItemGroup>
+	<None Include="Nuget_README.md" Pack="true" PackagePath="" />
+  </ItemGroup>
 	
 </Project>
