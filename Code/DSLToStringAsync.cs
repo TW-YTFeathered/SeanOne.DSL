@@ -137,7 +137,7 @@ namespace SeanOne.DSL
                     }
                 }
 
-                return RemoveLastEndIfNeeded(results, end, exclude_last_end);
+                return results.ToString();
             });
         }
 
@@ -170,7 +170,7 @@ namespace SeanOne.DSL
                     }
                 }
 
-                return RemoveLastEndIfNeeded(results, end, exclude_last_end);
+                return results.ToString();
             });
         }
         #endregion

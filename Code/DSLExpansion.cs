@@ -14,10 +14,6 @@ namespace SeanOne.DSL
         {
             return obj is IFormattable;
         }
-        public static bool SafeToString(Type type)
-        {
-            return type is IFormattable;
-        }
 
         /// <summary>
         /// 檢查 fullStr 是否包含 searchStr
@@ -162,17 +158,17 @@ namespace SeanOne.DSL
         /// </summary>
         public static string ExtractParameterValue(string dslInstruction, string parameterName)
         {
-            if (string.IsNullOrWhiteSpace(dslInstruction) || string.IsNullOrWhiteSpace(parameterName))
+            if (string.IsNullOrEmpty(dslInstruction) || string.IsNullOrEmpty(parameterName)) // 如果任一字串為空，直接回傳空字串
                 return string.Empty;
 
-            // 如果存在多個相同的參數，則拋出異常
-            if (Judge.ValidateSingleParameter(dslInstruction, parameterName))
+            if (Judge.ValidateSingleParameter(dslInstruction, parameterName)) // 檢查參數是否出現多次
             {
+                // 如果參數出現多次，拋出例外
                 throw new ArgumentException($"Parameter '{parameterName}' is specified multiple times.");
             }
 
-            int startIndex = dslInstruction.IndexOf(parameterName);
-            if (startIndex == -1)
+            int startIndex = dslInstruction.IndexOf(parameterName); // 找到參數名稱的位置
+            if (startIndex == -1) // 如果找不到參數名稱，回傳空字串
                 return string.Empty;
 
             startIndex += parameterName.Length;
@@ -183,42 +179,23 @@ namespace SeanOne.DSL
                 startIndex++;
             }
 
-            if (startIndex >= dslInstruction.Length)
+            if (startIndex >= dslInstruction.Length) // 如果已經到達字串末尾，回傳空字串
                 return string.Empty;
 
             // 檢查是否以引號開頭
             if (dslInstruction[startIndex] == '"')
             {
                 startIndex++; // 跳過開頭的引號
-                int endIndex = startIndex;
-                bool insideEscape = false;
-
-                // 查找結尾的引號，但忽略轉義的引號
-                while (endIndex < dslInstruction.Length)
+                int endIndex = dslInstruction.IndexOf('"', startIndex);
+                if (endIndex == -1)
                 {
-                    if (dslInstruction[endIndex] == '\\' && !insideEscape)
-                    {
-                        insideEscape = true;
-                    }
-                    else if (dslInstruction[endIndex] == '"' && !insideEscape)
-                    {
-                        break; // 找到非轉義的結尾引號
-                    }
-                    else
-                    {
-                        insideEscape = false;
-                    }
-                    endIndex++;
+                    // 如果找不到結尾的引號，則取到字串末尾
+                    endIndex = dslInstruction.Length;
                 }
 
-                // 提取引號內的值（包括轉義字符）
-                string value = dslInstruction.Substring(startIndex, endIndex - startIndex);
-
-                // 處理轉義序列（包括Unicode轉義）
-                value = ConvertToUnicode.DecodeUnicodeEscapes(value);
-                value = Regex.Unescape(value);
-
-                return value;
+                string value = dslInstruction.Substring(startIndex, endIndex - startIndex); // 擷取參數值
+                value = ConvertToUnicode.DecodeUnicodeEscapes(value); // 轉換 Unicode
+                return Regex.Unescape(value); // 處理轉義字元
             }
             else
             {
@@ -236,7 +213,7 @@ namespace SeanOne.DSL
         public static string ParameterValueOrDefault(string dslInstruction, string parameterName, string defaultValue)
         {
             string value = ExtractParameterValue(dslInstruction, parameterName);
-            return string.IsNullOrWhiteSpace(value) ? defaultValue : value;
+            return string.IsNullOrEmpty(value) ? defaultValue : value;
         }
 
         /// <summary>

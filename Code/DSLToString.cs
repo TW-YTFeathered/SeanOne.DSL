@@ -126,7 +126,7 @@ namespace SeanOne.DSL
                     results.Append(formatted).Append(end);
             }
 
-            return RemoveLastEndIfNeeded(results, end, exclude_last_end);
+            return results.ToString();
         }
 
         // 處理普通集合
@@ -153,7 +153,7 @@ namespace SeanOne.DSL
                     results.Append(itemString).Append(end);
             }
 
-            return RemoveLastEndIfNeeded(results, end, exclude_last_end);
+            return results.ToString();
         }
         #endregion
 
@@ -217,23 +217,6 @@ namespace SeanOne.DSL
 
             // 否則，使用默認的ToString方法
             return obj.ToString() ?? string.Empty;
-        }
-
-        // 根據需要移除最後的end字符串
-        private static string RemoveLastEndIfNeeded(StringBuilder builder, string end, bool exclude_last_end)
-        {
-            // 如果不需要移除，或者end是空的，或者builder長度小於end長度，直接返回
-            if (!exclude_last_end || string.IsNullOrEmpty(end) || builder.Length < end.Length)
-                return builder.ToString();
-
-            // 移除最後的end字符串
-            string result = builder.ToString();
-
-            // 確保最後的end字符串存在於結果中
-            if (result.EndsWith(end))
-                return result.Substring(0, result.Length - end.Length);
-
-            return result;
         }
     }
 }
