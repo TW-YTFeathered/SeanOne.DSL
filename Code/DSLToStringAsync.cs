@@ -99,6 +99,8 @@ namespace SeanOne.DSL
         // 處理字典集合
         private static Task<string> FE_ProcessDictionary_Async(IDictionary dictionary, string dicFormat, string keyFormat, string valueFormat, string end, string last_concat_string, bool exclude_last_end)
         {
+            object syncRoot = _lock; // 複製鎖定物件，避免在多線程環境中出現問題
+
             return Task.Run(() =>
             {
                 if (string.IsNullOrEmpty(dicFormat))
@@ -112,24 +114,27 @@ namespace SeanOne.DSL
 
                 var keyList = keys.Cast<object>().ToList();
 
-                for (int i = 0; i < count; i++)
+                lock (syncRoot)
                 {
-                    var key = keyList[i];
-                    var value = dictionary[key];
+                    for (int i = 0; i < count; i++)
+                    {
+                        var key = keyList[i];
+                        var value = dictionary[key];
 
-                    string keyStr = FormatObject(key, keyFormat);
-                    string valueStr = FormatObject(value, valueFormat);
+                        string keyStr = FormatObject(key, keyFormat);
+                        string valueStr = FormatObject(value, valueFormat);
 
-                    string formatted = string.Format(dicFormat, keyStr, valueStr);
+                        string formatted = string.Format(dicFormat, keyStr, valueStr);
 
-                    // 如果是倒數第二個，且 last_concat_string 不為 null 或空字串
-                    if (i == count - 2 && !string.IsNullOrEmpty(last_concat_string))
-                        results.Append(formatted).Append(last_concat_string);
-                    // 如果是最後一個，且 exclude_last_end 為 true
-                    else if (i == count - 1 && exclude_last_end)
-                        results.Append(formatted); // 不加 end
-                    else
-                        results.Append(formatted).Append(end);
+                        // 如果是倒數第二個，且 last_concat_string 不為 null 或空字串
+                        if (i == count - 2 && !string.IsNullOrEmpty(last_concat_string))
+                            results.Append(formatted).Append(last_concat_string);
+                        // 如果是最後一個，且 exclude_last_end 為 true
+                        else if (i == count - 1 && exclude_last_end)
+                            results.Append(formatted); // 不加 end
+                        else
+                            results.Append(formatted).Append(end);
+                    }
                 }
 
                 return RemoveLastEndIfNeeded(results, end, exclude_last_end);
@@ -139,6 +144,8 @@ namespace SeanOne.DSL
         // 處理普通集合
         private static Task<string> FE_ProcessEnumerable_Async(IEnumerable enumerable, string format, string end, string last_concat_string, bool exclude_last_end)
         {
+            object syncRoot = _lock; // 複製鎖定物件，避免在多線程環境中出現問題
+
             return Task.Run(() => {
                 var results = new StringBuilder();
 
@@ -146,19 +153,21 @@ namespace SeanOne.DSL
                 var list = enumerable.Cast<object>().ToList();
                 int count = list.Count;
 
-
-                for (int i = 0; i < count; i++)
+                lock (syncRoot)
                 {
-                    string itemString = FormatObject(list[i], format);
+                    for (int i = 0; i < count; i++)
+                    {
+                        string itemString = FormatObject(list[i], format);
 
-                    // 如果是倒數第二個，且 last_concat_string 不為 null 或空字串
-                    if (i == count - 2 && !string.IsNullOrEmpty(last_concat_string))
-                        results.Append(itemString).Append(last_concat_string);
-                    // 如果是最後一個，且 exclude_last_end 為 true
-                    else if (i == count - 1 && exclude_last_end)
-                        results.Append(itemString); // 不加 end
-                    else
-                        results.Append(itemString).Append(end);
+                        // 如果是倒數第二個，且 last_concat_string 不為 null 或空字串
+                        if (i == count - 2 && !string.IsNullOrEmpty(last_concat_string))
+                            results.Append(itemString).Append(last_concat_string);
+                        // 如果是最後一個，且 exclude_last_end 為 true
+                        else if (i == count - 1 && exclude_last_end)
+                            results.Append(itemString); // 不加 end
+                        else
+                            results.Append(itemString).Append(end);
+                    }
                 }
 
                 return RemoveLastEndIfNeeded(results, end, exclude_last_end);
