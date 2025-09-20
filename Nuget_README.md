@@ -33,10 +33,6 @@ For complete documentation and more examples, see the [README.md](https://github
 
 [SeanOne.DSL GitHub](https://github.com/TW-YTFeathered/SeanOne.DSL)
 
-## Limitations
-
-- Not thread-safe for concurrent access
-
 ## License
 
 MIT License
