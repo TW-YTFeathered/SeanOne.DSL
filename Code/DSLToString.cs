@@ -60,12 +60,12 @@ namespace SeanOne.DSL
             string valueFormat = Get.ParameterValueOrDefault(dslInstruction, "/valueformat:", string.Empty);
 
             // 提取並解析 /exclude-last-end: 參數
-            bool shouldExcludeLastEnd = false;
+            bool exclude_last_end = false;
             string excludeLastEndValue = Get.ExtractParameterValue(dslInstruction, "/exclude-last-end:");
             if (!string.IsNullOrEmpty(excludeLastEndValue) &&
                 bool.TryParse(excludeLastEndValue, out bool parsedEndPrint))
             {
-                shouldExcludeLastEnd = parsedEndPrint;
+                exclude_last_end = parsedEndPrint;
             }
 
             // 驗證格式參數
@@ -81,7 +81,7 @@ namespace SeanOne.DSL
                 {
                     throw new ArgumentException($"Invalid parameters for dictionary processing: {string.Join(", ", invalidParams)}");
                 }
-                return FE_ProcessDictionary(dictionary, dicFormat, keyFormat, valueFormat, end, last_concat_string, shouldExcludeLastEnd);
+                return FE_ProcessDictionary(dictionary, dicFormat, keyFormat, valueFormat, end, last_concat_string, exclude_last_end);
             }
 
             // 處理普通集合類型
@@ -89,11 +89,11 @@ namespace SeanOne.DSL
             {
                 throw new ArgumentException($"Invalid parameters for enumerable processing: {string.Join(", ", invalidParamsForEnum)}");
             }
-            return FE_ProcessEnumerable(enumerable, format, end, last_concat_string, shouldExcludeLastEnd);
+            return FE_ProcessEnumerable(enumerable, format, end, last_concat_string, exclude_last_end);
         }
 
         // 處理字典集合
-        private static string FE_ProcessDictionary(IDictionary dictionary, string dicFormat, string keyFormat, string valueFormat, string end, string last_concat_string, bool shouldExcludeLastEnd)
+        private static string FE_ProcessDictionary(IDictionary dictionary, string dicFormat, string keyFormat, string valueFormat, string end, string last_concat_string, bool exclude_last_end)
         {
             if (string.IsNullOrEmpty(dicFormat))
                 throw new ArgumentException("'/dicformat:' parameter is required when processing dictionaries.");
@@ -119,18 +119,18 @@ namespace SeanOne.DSL
                 // 如果是倒數第二個，且 last_concat_string 不為 null 或空字串
                 if (i == count - 2 && !string.IsNullOrEmpty(last_concat_string))
                     results.Append(formatted).Append(last_concat_string);
-                // 如果是最後一個，且 shouldExcludeLastEnd 為 true
-                else if (i == count - 1 && shouldExcludeLastEnd)
+                // 如果是最後一個，且 exclude_last_end 為 true
+                else if (i == count - 1 && exclude_last_end)
                     results.Append(formatted); // 不加 end
                 else
                     results.Append(formatted).Append(end);
             }
 
-            return RemoveLastEndIfNeeded(results, end, shouldExcludeLastEnd);
+            return RemoveLastEndIfNeeded(results, end, exclude_last_end);
         }
 
         // 處理普通集合
-        private static string FE_ProcessEnumerable(IEnumerable enumerable, string format, string end, string last_concat_string, bool shouldExcludeLastEnd)
+        private static string FE_ProcessEnumerable(IEnumerable enumerable, string format, string end, string last_concat_string, bool exclude_last_end)
         {
             var results = new StringBuilder();
 
@@ -146,14 +146,14 @@ namespace SeanOne.DSL
                 // 如果是倒數第二個，且 last_concat_string 不為 null 或空字串
                 if (i == count - 2 && !string.IsNullOrEmpty(last_concat_string))
                     results.Append(itemString).Append(last_concat_string);
-                // 如果是最後一個，且 shouldExcludeLastEnd 為 true
-                else if (i == count - 1 && shouldExcludeLastEnd)
+                // 如果是最後一個，且 exclude_last_end 為 true
+                else if (i == count - 1 && exclude_last_end)
                     results.Append(itemString); // 不加 end
                 else
                     results.Append(itemString).Append(end);
             }
 
-            return RemoveLastEndIfNeeded(results, end, shouldExcludeLastEnd);
+            return RemoveLastEndIfNeeded(results, end, exclude_last_end);
         }
         #endregion
 
@@ -220,10 +220,10 @@ namespace SeanOne.DSL
         }
 
         // 根據需要移除最後的end字符串
-        private static string RemoveLastEndIfNeeded(StringBuilder builder, string end, bool shouldExcludeLastEnd)
+        private static string RemoveLastEndIfNeeded(StringBuilder builder, string end, bool exclude_last_end)
         {
             // 如果不需要移除，或者end是空的，或者builder長度小於end長度，直接返回
-            if (!shouldExcludeLastEnd || string.IsNullOrEmpty(end) || builder.Length < end.Length)
+            if (!exclude_last_end || string.IsNullOrEmpty(end) || builder.Length < end.Length)
                 return builder.ToString();
 
             // 移除最後的end字符串
