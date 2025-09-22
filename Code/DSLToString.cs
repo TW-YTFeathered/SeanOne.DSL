@@ -55,9 +55,9 @@ namespace SeanOne.DSL
             string end = Get.ParameterValueOrDefault(dslInstruction, "/end:", string.Empty);
             string last_concat_string = Get.ParameterValueOrDefault(dslInstruction, "/last-concat-string:", string.Empty);
             string format = Get.ParameterValueOrDefault(dslInstruction, "/tostring:", string.Empty);
-            string dicFormat = Get.ParameterValueOrDefault(dslInstruction, "/dicformat:", string.Empty);
-            string keyFormat = Get.ParameterValueOrDefault(dslInstruction, "/keyformat:", string.Empty);
-            string valueFormat = Get.ParameterValueOrDefault(dslInstruction, "/valueformat:", string.Empty);
+            string dictFormat = Get.ParameterValueOrDefault(dslInstruction, "/dict-format:", string.Empty);
+            string keyFormat = Get.ParameterValueOrDefault(dslInstruction, "/key-format:", string.Empty);
+            string valueFormat = Get.ParameterValueOrDefault(dslInstruction, "/value-format:", string.Empty);
 
             // 提取並解析 /exclude-last-end: 參數
             bool exclude_last_end = false;
@@ -81,7 +81,7 @@ namespace SeanOne.DSL
                 {
                     throw new ArgumentException($"Invalid parameters for dictionary processing: {string.Join(", ", invalidParams)}");
                 }
-                return FE_ProcessDictionary(dictionary, dicFormat, keyFormat, valueFormat, end, last_concat_string, exclude_last_end);
+                return FE_ProcessDictionary(dictionary, dictFormat, keyFormat, valueFormat, end, last_concat_string, exclude_last_end);
             }
 
             // 處理普通集合類型
@@ -93,10 +93,10 @@ namespace SeanOne.DSL
         }
 
         // 處理字典集合
-        private static string FE_ProcessDictionary(IDictionary dictionary, string dicFormat, string keyFormat, string valueFormat, string end, string last_concat_string, bool exclude_last_end)
+        private static string FE_ProcessDictionary(IDictionary dictionary, string dictFormat, string keyFormat, string valueFormat, string end, string last_concat_string, bool exclude_last_end)
         {
-            if (string.IsNullOrEmpty(dicFormat))
-                throw new ArgumentException("'/dicformat:' parameter is required when processing dictionaries.");
+            if (string.IsNullOrEmpty(dictFormat))
+                throw new ArgumentException("'dict-format' parameter is required when processing dictionaries.");
 
             var results = new StringBuilder();
 
@@ -114,7 +114,7 @@ namespace SeanOne.DSL
                 string keyStr = FormatObject(key, keyFormat);
                 string valueStr = FormatObject(value, valueFormat);
 
-                string formatted = string.Format(dicFormat, keyStr, valueStr);
+                string formatted = string.Format(dictFormat, keyStr, valueStr);
 
                 // 如果是倒數第二個，且 last_concat_string 不為 null 或空字串
                 if (i == count - 2 && !string.IsNullOrEmpty(last_concat_string))
@@ -174,7 +174,7 @@ namespace SeanOne.DSL
                 // 驗證 obj 是否實作 IFormattable
                 if (obj != null && !Judge.SafeToString(obj))
                 {
-                    throw new ArgumentException($"Collection elements must implement IFormattable for '/tostring:'. Found: {obj.GetType().Name}");
+                    throw new ArgumentException($"Collection elements must implement IFormattable for 'tostring'. Found: {obj.GetType().Name}");
                 }
             }
 
@@ -200,7 +200,7 @@ namespace SeanOne.DSL
                 if (element != null && !Judge.SafeToString(element))
                 {
                     var elementType = element.GetType();
-                    throw new ArgumentException($"Collection elements must implement IFormattable for '/tostring:'. Found: {elementType.Name}");
+                    throw new ArgumentException($"Collection elements must implement IFormattable for 'tostring'. Found: {elementType.Name}");
                 }
             }
         }

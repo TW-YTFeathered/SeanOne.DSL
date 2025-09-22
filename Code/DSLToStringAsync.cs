@@ -59,9 +59,9 @@ namespace SeanOne.DSL
             string end = Get.ParameterValueOrDefault(dslInstruction, "/end:", string.Empty);
             string last_concat_string = Get.ParameterValueOrDefault(dslInstruction, "/last-concat-string:", string.Empty);
             string format = Get.ParameterValueOrDefault(dslInstruction, "/tostring:", string.Empty);
-            string dicFormat = Get.ParameterValueOrDefault(dslInstruction, "/dicformat:", string.Empty);
-            string keyFormat = Get.ParameterValueOrDefault(dslInstruction, "/keyformat:", string.Empty);
-            string valueFormat = Get.ParameterValueOrDefault(dslInstruction, "/valueformat:", string.Empty);
+            string dictFormat = Get.ParameterValueOrDefault(dslInstruction, "/dict-format:", string.Empty);
+            string keyFormat = Get.ParameterValueOrDefault(dslInstruction, "/key-format:", string.Empty);
+            string valueFormat = Get.ParameterValueOrDefault(dslInstruction, "/value-format:", string.Empty);
 
             // 提取並解析 /exclude-last-end: 參數
             bool exclude_last_end = false;
@@ -85,7 +85,7 @@ namespace SeanOne.DSL
                 {
                     throw new ArgumentException($"Invalid parameters for dictionary processing: {string.Join(", ", invalidParams)}");
                 }
-                return await FE_ProcessDictionary_Async(dictionary, dicFormat, keyFormat, valueFormat, end, last_concat_string, exclude_last_end);
+                return await FE_ProcessDictionary_Async(dictionary, dictFormat, keyFormat, valueFormat, end, last_concat_string, exclude_last_end);
             }
 
             // 處理普通集合類型
@@ -97,14 +97,14 @@ namespace SeanOne.DSL
         }
 
         // 處理字典集合
-        private static Task<string> FE_ProcessDictionary_Async(IDictionary dictionary, string dicFormat, string keyFormat, string valueFormat, string end, string last_concat_string, bool exclude_last_end)
+        private static Task<string> FE_ProcessDictionary_Async(IDictionary dictionary, string dictFormat, string keyFormat, string valueFormat, string end, string last_concat_string, bool exclude_last_end)
         {
             object syncRoot = _lock; // 複製鎖定物件，避免在多線程環境中出現問題
 
             return Task.Run(() =>
             {
-                if (string.IsNullOrEmpty(dicFormat))
-                    throw new ArgumentException("'/dicformat:' parameter is required when processing dictionaries.");
+                if (string.IsNullOrEmpty(dictFormat))
+                    throw new ArgumentException("'dict-format' parameter is required when processing dictionaries.");
 
                 var results = new StringBuilder();
 
@@ -124,7 +124,7 @@ namespace SeanOne.DSL
                         string keyStr = FormatObject(key, keyFormat);
                         string valueStr = FormatObject(value, valueFormat);
 
-                        string formatted = string.Format(dicFormat, keyStr, valueStr);
+                        string formatted = string.Format(dictFormat, keyStr, valueStr);
 
                         // 如果是倒數第二個，且 last_concat_string 不為 null 或空字串
                         if (i == count - 2 && !string.IsNullOrEmpty(last_concat_string))
@@ -216,19 +216,16 @@ namespace SeanOne.DSL
         // 驗證集合元素是否可格式化 (非同步)
         private static Task ValidateEnumerableFormattable_Async(IEnumerable enumerable, string format)
         {
-            object syncRoot = _lock; // 複製鎖定物件，避免在多線程環境中出現問題
+            var snapshot = enumerable.Cast<object>().ToList(); // 創建集合快照，避免多線程問題
 
             return Task.Run(() =>
             {
-                lock(syncRoot) 
+                foreach (var element in snapshot)
                 {
-                    foreach (var element in enumerable)
+                    if (element != null && !Judge.SafeToString(element))
                     {
-                        if (element != null && !Judge.SafeToString(element))
-                        {
-                            var elementType = element.GetType();
-                            throw new ArgumentException($"Collection elements must implement IFormattable for '/tostring:'. Found: {elementType.Name}");
-                        }
+                        var elementType = element.GetType();
+                        throw new ArgumentException($"Collection elements must implement IFormattable for 'tostring'. Found: {elementType.Name}");
                     }
                 }
             });

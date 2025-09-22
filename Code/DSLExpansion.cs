@@ -61,9 +61,9 @@ namespace SeanOne.DSL
         // 定義每個方法支援的參數
         private static readonly Dictionary<string, HashSet<string>> MethodParameters = new Dictionary<string, HashSet<string>>
         {
-            ["basic"] = new HashSet<string> { "/end", "/tostring" },
-            ["FE_ProcessEnumerable"] = new HashSet<string> { "/end", "/last-concat-string", "/exclude-last-end", "/tostring" },
-            ["FE_ProcessDictionary"] = new HashSet<string> { "/end", "/last-concat-string", "/exclude-last-end", "/dicformat", "/keyformat", "/valueformat" }
+            ["basic"] = new HashSet<string> { "end", "tostring" },
+            ["FE_ProcessEnumerable"] = new HashSet<string> { "end", "last-concat-string", "exclude-last-end", "tostring" },
+            ["FE_ProcessDictionary"] = new HashSet<string> { "end", "last-concat-string", "exclude-last-end", "dict-format", "key-format", "value-format" }
         };
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace SeanOne.DSL
             string withoutQuotes = Regex.Replace(unescaped, "\"(?:\\\\.|[^\"])*\"", string.Empty);
 
             // 3. 正則匹配引號外的參數
-            var parameterPattern = @"(/([\w-]+))(?::([^/\s]*))?";
+            var parameterPattern = @"(?<=/)([\w-]+)(?::([^/\s]*))?";
             var matches = Regex.Matches(withoutQuotes, parameterPattern);
 
             foreach (Match match in matches)
