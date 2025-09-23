@@ -21,8 +21,8 @@ namespace SeanOne.DSL
             // 創建函數名稱字典，映射到對應的執行函數
             var actions = new Dictionary<string, Func<Task<string>>>
             {
-                ["fe"] = () => FE_Async(obj, dslInstruction),
-                ["foreach"] = () => FE_Async(obj, dslInstruction),
+                ["fe"] = () => FE_Async(obj, dslInstruction, "fe"),
+                ["foreach"] = () => FE_Async(obj, dslInstruction, "foreach"),
                 ["basic"] = () => Basic_Async(obj, dslInstruction),
             };
 
@@ -42,19 +42,21 @@ namespace SeanOne.DSL
                 else
                 {
                     // 未知指令拋出異常
-                    throw new ArgumentException($"Unknown functions directive: {directive}");
+                    throw new MissingMethodException($"Unknown functions directive: {directive}");
                 }
             }
         }
 
         #region FE Method Async
-        private async static Task<string> FE_Async(object obj, string dslInstruction)
+        private async static Task<string> FE_Async(object obj, string dslInstruction, string commandName)
         {
-            // 確保 obj 是 IEnumerable 且不是 string
-            IEnumerable enumerable = obj as IEnumerable;
-            if (enumerable == null || obj is string)
-                throw new ArgumentException("Object must be enumerable (and not a string) for 'fe' code.");
-
+            if (obj == null)
+                throw new ArgumentNullException($"Target object cannot be null for '{commandName}' directive");
+            if (obj is string)
+                throw new ArgumentException($"String is not supported for '{commandName}' directive");
+            if (!(obj is IEnumerable enumerable))
+                throw new ArgumentException($"Object must implement IEnumerable for '{commandName}' directive");
+            
             // 提前提取所有參數
             string end = Get.ParameterValueOrDefault(dslInstruction, "/end:", string.Empty);
             string last_concat_string = Get.ParameterValueOrDefault(dslInstruction, "/last-concat-string:", string.Empty);
@@ -82,17 +84,15 @@ namespace SeanOne.DSL
             if (obj is IDictionary dictionary)
             {
                 if (!Judge.ValidateCodeParametersAuto(dslInstruction, dictionary.GetType(), out var invalidParams))
-                {
                     throw new ArgumentException($"Invalid parameters for dictionary processing: {string.Join(", ", invalidParams)}");
-                }
+
                 return await FE_ProcessDictionary_Async(dictionary, dictFormat, keyFormat, valueFormat, end, last_concat_string, exclude_last_end);
             }
 
             // 處理普通集合類型
             if (!Judge.ValidateCodeParametersAuto(dslInstruction, enumerable.GetType(), out var invalidParamsForEnum))
-            {
                 throw new ArgumentException($"Invalid parameters for enumerable processing: {string.Join(", ", invalidParamsForEnum)}");
-            }
+
             return await FE_ProcessEnumerable_Async(enumerable, format, end, last_concat_string, exclude_last_end);
         }
 
@@ -104,7 +104,7 @@ namespace SeanOne.DSL
             return Task.Run(() =>
             {
                 if (string.IsNullOrEmpty(dictFormat))
-                    throw new ArgumentException("'dict-format' parameter is required when processing dictionaries.");
+                    throw new ArgumentNullException("'dict-format' parameter is required when processing dictionaries");
 
                 var results = new StringBuilder();
 
@@ -194,7 +194,7 @@ namespace SeanOne.DSL
                     // 驗證 obj 是否實作 IFormattable
                     if (obj != null && !Judge.SafeToString(obj))
                     {
-                        throw new ArgumentException($"Collection elements must implement IFormattable for '/tostring:'. Found: {obj.GetType().Name}");
+                        throw new ArgumentException($"Collection elements must implement IFormattable for 'tostring'. Found: {obj.GetType().Name}");
                     }
                 }
 

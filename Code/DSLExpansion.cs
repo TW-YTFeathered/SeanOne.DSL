@@ -81,7 +81,7 @@ namespace SeanOne.DSL
                 return true;
 
             if (!MethodParameters.ContainsKey(methodType))
-                throw new ArgumentException($"Unsupported method types: {methodType}");
+                throw new KeyNotFoundException($"Unsupported method types: {methodType}");
 
             var validParams = MethodParameters[methodType];
 
