@@ -24,7 +24,7 @@ namespace SeanOne.DSL
         {
             // 檢查 物件 是否是 null
             if (obj == null)
-                throw new ArgumentNullException("Input object must not be null.", nameof(obj));
+                throw new ArgumentNullException("Input object must not be null.");
 
             // 檢查 DSL 指令是否為空或 null
             if (string.IsNullOrWhiteSpace(dslInstruction))
@@ -51,7 +51,7 @@ namespace SeanOne.DSL
         public static async Task<string> FormatAsync(object obj, string dslInstruction)
         {
             if (obj == null)
-                throw new ArgumentNullException("Input object must not be null.", nameof(obj));
+                throw new ArgumentNullException("Input object must not be null.");
 
             if (string.IsNullOrWhiteSpace(dslInstruction))
                 throw new ArgumentNullException("DSL instruction cannot be null or empty");
