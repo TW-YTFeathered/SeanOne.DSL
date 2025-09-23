@@ -24,11 +24,11 @@ namespace SeanOne.DSL
         {
             // 檢查 物件 是否是 null
             if (obj == null)
-                throw new ArgumentException("Input object must not be null.", nameof(obj));
+                throw new ArgumentNullException("Input object must not be null.", nameof(obj));
 
             // 檢查 DSL 指令是否為空或 null
             if (string.IsNullOrWhiteSpace(dslInstruction))
-                throw new ArgumentException("DSL instruction cannot be null or empty");
+                throw new ArgumentNullException("DSL instruction cannot be null or empty");
 
             dslInstruction = dslInstruction.Trim(); // 去除前後空白
             string result = Decoder(obj, dslInstruction); // 呼叫 Decoder 方法
@@ -51,10 +51,10 @@ namespace SeanOne.DSL
         public static async Task<string> FormatAsync(object obj, string dslInstruction)
         {
             if (obj == null)
-                throw new ArgumentException("Input object must not be null.", nameof(obj));
+                throw new ArgumentNullException("Input object must not be null.", nameof(obj));
 
             if (string.IsNullOrWhiteSpace(dslInstruction))
-                throw new ArgumentException("DSL instruction cannot be null or empty");
+                throw new ArgumentNullException("DSL instruction cannot be null or empty");
 
             dslInstruction = dslInstruction.Trim(); // 去除前後空白
 

@@ -17,8 +17,8 @@ namespace SeanOne.DSL
             // 創建函數名稱字典，映射到對應的執行函數
             Dictionary<string, Func<string>> actions = new Dictionary<string, Func<string>>
             {
-                ["fe"] = () => FE(obj, dslInstruction),
-                ["foreach"] = () => FE(obj, dslInstruction),
+                ["fe"] = () => FE(obj, dslInstruction, "fe"),
+                ["foreach"] = () => FE(obj, dslInstruction, "foreach"),
                 ["basic"] = () => Basic(obj, dslInstruction),
             };
 
@@ -38,18 +38,20 @@ namespace SeanOne.DSL
                 else
                 {
                     // 未知指令拋出異常
-                    throw new ArgumentException($"Unknown functions directive: {directive}");
+                    throw new MissingMethodException($"Unknown functions directive: {directive}");
                 }
             }
         }
 
         #region FE Method
-        private static string FE(object obj, string dslInstruction)
+        private static string FE(object obj, string dslInstruction, string commandName)
         {
-            // 確保 obj 是 IEnumerable 且不是 string
-            IEnumerable enumerable = obj as IEnumerable;
-            if (enumerable == null || obj is string)
-                throw new ArgumentException("Object must be enumerable (and not a string) for 'fe' code.");
+            if (obj == null)
+                throw new ArgumentNullException($"Target object cannot be null for '{commandName}' directive");
+            if (obj is string)
+                throw new ArgumentException($"String is not supported for '{commandName}' directive");
+            if (!(obj is IEnumerable enumerable))
+                throw new ArgumentException($"Object must implement IEnumerable for '{commandName}' directive");
 
             // 提前提取所有參數
             string end = Get.ParameterValueOrDefault(dslInstruction, "/end:", string.Empty);
@@ -78,17 +80,15 @@ namespace SeanOne.DSL
             if (obj is IDictionary dictionary)
             {
                 if (!Judge.ValidateCodeParametersAuto(dslInstruction, dictionary.GetType(), out var invalidParams))
-                {
                     throw new ArgumentException($"Invalid parameters for dictionary processing: {string.Join(", ", invalidParams)}");
-                }
+
                 return FE_ProcessDictionary(dictionary, dictFormat, keyFormat, valueFormat, end, last_concat_string, exclude_last_end);
             }
 
             // 處理普通集合類型
             if (!Judge.ValidateCodeParametersAuto(dslInstruction, enumerable.GetType(), out var invalidParamsForEnum))
-            {
                 throw new ArgumentException($"Invalid parameters for enumerable processing: {string.Join(", ", invalidParamsForEnum)}");
-            }
+
             return FE_ProcessEnumerable(enumerable, format, end, last_concat_string, exclude_last_end);
         }
 
@@ -96,7 +96,7 @@ namespace SeanOne.DSL
         private static string FE_ProcessDictionary(IDictionary dictionary, string dictFormat, string keyFormat, string valueFormat, string end, string last_concat_string, bool exclude_last_end)
         {
             if (string.IsNullOrEmpty(dictFormat))
-                throw new ArgumentException("'dict-format' parameter is required when processing dictionaries.");
+                throw new ArgumentNullException("'dict-format' parameter is required when processing dictionaries.");
 
             var results = new StringBuilder();
 
@@ -173,15 +173,11 @@ namespace SeanOne.DSL
 
                 // 驗證 obj 是否實作 IFormattable
                 if (obj != null && !Judge.SafeToString(obj))
-                {
                     throw new ArgumentException($"Collection elements must implement IFormattable for 'tostring'. Found: {obj.GetType().Name}");
-                }
             }
 
             if (!Judge.ValidateCodeParameters(dslInstruction, "basic", out var invalidParams))
-            {
                 throw new ArgumentException($"Invalid parameters for basic processing: {string.Join(", ", invalidParams)}");
-            }
 
             // 格式化對象
             string result = obj is IFormattable formattable && !string.IsNullOrEmpty(format)
