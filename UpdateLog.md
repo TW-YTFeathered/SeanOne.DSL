@@ -4,12 +4,13 @@
 
 ### **beta 0.3.0**
 
-*Focus:Create and refine `GUIDE.md` documentation*
+*Focus:Refine GUIDE.md and improve API clarity*
 
-- Added asynchronous (`async`) methods to support non-blocking operations
 - Added `GUIDE.md` to complement `README.md` with extended documentation
+- Added asynchronous (`async`) methods to support non-blocking operations
 - Renamed parameters to follow a more consistent and syntactically appropriate naming style, except for `tostring`, which directly invokes C#'s `ToString` method
 - Replaced generic `throw` with specific exception type for clearer error semantics
+- Improve the comments
 
 ### **beta 0.2.0**
 

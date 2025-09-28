@@ -9,13 +9,14 @@ namespace SeanOne.DSL
     public partial class DslFormatter
     {
         /// <summary>
-        /// Formats an object.
+        /// Formats the specified object according to the provided DSL instruction.
         /// </summary>
         /// <param name="obj">
-        /// The object to format.
+        /// The object to be formatted. Must not be <c>null</c>.
         /// </param>
         /// <param name="dslInstruction">
-        /// The formatting code that specifies how to format the object.
+        /// A DSL (domain-specific language) instruction string that defines the formatting rules.
+        /// Must not be <c>null</c> or empty.
         /// </param>
         /// <returns>
         /// Returns the formatted string.
@@ -31,8 +32,7 @@ namespace SeanOne.DSL
                 throw new ArgumentNullException("DSL instruction cannot be null or empty");
 
             dslInstruction = dslInstruction.Trim(); // 去除前後空白
-            string result = Decoder(obj, dslInstruction); // 呼叫 Decoder 方法
-            return result;
+            return Decoder(obj, dslInstruction); // 呼叫 Decoder 方法，並回傳結果
         }
 
         /// <summary>
@@ -50,15 +50,17 @@ namespace SeanOne.DSL
         /// </returns>
         public static async Task<string> FormatAsync(object obj, string dslInstruction)
         {
+            // 檢查 物件 是否是 null
             if (obj == null)
                 throw new ArgumentNullException("Input object must not be null.");
 
+            // 檢查 DSL 指令是否為空或 null
             if (string.IsNullOrWhiteSpace(dslInstruction))
                 throw new ArgumentNullException("DSL instruction cannot be null or empty");
 
             dslInstruction = dslInstruction.Trim(); // 去除前後空白
 
-            return await Decoder_Async(obj, dslInstruction);
+            return await Decoder_Async(obj, dslInstruction); // 呼叫 Decoder 方法，並回傳結果
         }
     }
 }
