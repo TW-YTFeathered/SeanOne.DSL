@@ -2,6 +2,14 @@
 
 ## **Beta**
 
+### **beta 0.4.0**
+
+*Focus:Bug fixs*
+
+- Addressed errors arising from dependence on regular expressions or `string.Format()` by removing reliance on them
+- Fixed the regular expression so that parameters are treated as valid matchable arguments, avoiding errors
+- Converted function comments to a unified XML format
+
 ### **beta 0.3.0**
 
 *Focus:Refine GUIDE.md and improve API clarity*
