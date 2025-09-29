@@ -67,7 +67,7 @@ using SeanOne.DSL;
 
 List<int> ints = Enumerable.Range(0, 10).ToList();
 
-DslFormatter.Format(ints, "fe /tostring:F2 /end:\", \" /last-concat-string:\" and \" /exclude-last-end:true");
+DslFormatter.Format(ints, "fe /tostring:F2 /end:\", \" /final-pair-separator:\" and \" /exclude-last-end:true");
 // Return: 0.00, 1.00, 2.00, 3.00, 4.00, 5.00, 6.00, 7.00, 8.00 and 9.00
 ```
 

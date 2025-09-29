@@ -29,7 +29,7 @@ A lightweight C# library designed for fast and flexible object-to-string formatt
 
 | Parameter Name | Example         | Description |
 |----------------|-----------------|-------------|
-| `end`          | `/end:\\n`      | Appends a string after each value. Use `Regex.Unescape()` to decode escape sequences |
+| `end`          | `/end:\\n`      | Appends a string after each value. |
 | `tostring`     | `/tostring:F2`  | Applies formatting to items implementing `IFormattable`. Not applicable to dictionaries. Use C#'s `ToString()` method. |
 
 ### IEnumerable-Specific Parameters
@@ -37,13 +37,13 @@ A lightweight C# library designed for fast and flexible object-to-string formatt
 | Parameter Name       | Example                         | Description |
 |----------------------|---------------------------------|-------------|
 | `exclude-last-end`   | `/exclude-last-end:true`        | Omits the end string after the last item in the sequence. Applies to all `IEnumerable` types. |
-| `last-concat-string` | `/last-concat-string:\" and \"` | Replace the connector between the last and second-to-last items with last_concat_string (falling back to end if not specified) |
+| `final-pair-separator` | `/final-pair-separator:" and "` | Replaces the separator between the last two items in the sequence. Falls back to `end` if not specified. |
 
 ### IDictionary-Specific Parameters
 
 | Parameter Name | Example               | Description |
 |----------------|-----------------------|-------------|
-| `dict-format`    | `/dict-format:{0}=>{1}` | Format string for dictionary entries: `{0}` represents the key, `{1}` represents the value, but `{2}`, `{3}`, etc. cannot be used because the format relies on `string.Format` |
+| `dict-format`    | `/dict-format:{0}=>{1}` | Format string for dictionary entries: `{0}` represents the key, `{1}` represents the value. |
 | `key-format`    | `/key-format:F2`       | Format string applied to dictionary keys |
 | `value-format`  | `/value-format:F2`     | Format string applied to dictionary values |
 
