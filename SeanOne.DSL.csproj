@@ -10,6 +10,7 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <PackageReadmeFile>Nuget_README.md</PackageReadmeFile>
+    <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
 	
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0|AnyCPU'">
@@ -51,5 +52,9 @@
   <ItemGroup>
 	<None Include="Nuget_README.md" Pack="true" PackagePath="" />
   </ItemGroup>
-	
+
+  <ItemGroup>
+	<None Include="icon.png" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
 </Project>
