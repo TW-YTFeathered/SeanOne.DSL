@@ -3,12 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace SeanOne.DSL
 {
     partial class DslFormatter
     {
-        // 解碼並選擇適當的方法
+        /// <summary>
+        /// 解碼並選擇適當的方法
+        /// </summary>
+        /// <param name="obj"> 目標物件 </param>
+        /// <param name="dslInstruction"> Dsl 指令 </param>
         private static string Decoder(object obj, string dslInstruction)
         {
             // 從 DSL 指令中提取函數名稱
@@ -44,6 +49,12 @@ namespace SeanOne.DSL
         }
 
         #region FE Method
+        /// <summary>
+        /// 將 IEnumerable 轉換為字串
+        /// </summary>
+        /// <param name="obj"> 目標物件 </param>
+        /// <param name="dslInstruction"> Dsl 指令 </param>
+        /// <param name="commandName"> 呼叫時的指令名稱(僅用做 throw 時) </param>
         private static string FE(object obj, string dslInstruction, string commandName)
         {
             if (obj == null)
@@ -55,7 +66,7 @@ namespace SeanOne.DSL
 
             // 提前提取所有參數
             string end = Get.ParameterValueOrDefault(dslInstruction, "/end:", string.Empty);
-            string last_concat_string = Get.ParameterValueOrDefault(dslInstruction, "/last-concat-string:", string.Empty);
+            string final_pair_separator = Get.ParameterValueOrDefault(dslInstruction, "/final-pair-separator:", string.Empty);
             string format = Get.ParameterValueOrDefault(dslInstruction, "/tostring:", string.Empty);
             string dictFormat = Get.ParameterValueOrDefault(dslInstruction, "/dict-format:", string.Empty);
             string keyFormat = Get.ParameterValueOrDefault(dslInstruction, "/key-format:", string.Empty);
@@ -82,18 +93,27 @@ namespace SeanOne.DSL
                 if (!Judge.ValidateCodeParametersAuto(dslInstruction, dictionary.GetType(), out var invalidParams))
                     throw new ArgumentException($"Invalid parameters for dictionary processing: {string.Join(", ", invalidParams)}");
 
-                return FE_ProcessDictionary(dictionary, dictFormat, keyFormat, valueFormat, end, last_concat_string, exclude_last_end);
+                return FE_ProcessDictionary(dictionary, dictFormat, keyFormat, valueFormat, end, final_pair_separator, exclude_last_end);
             }
 
             // 處理普通集合類型
             if (!Judge.ValidateCodeParametersAuto(dslInstruction, enumerable.GetType(), out var invalidParamsForEnum))
                 throw new ArgumentException($"Invalid parameters for enumerable processing: {string.Join(", ", invalidParamsForEnum)}");
 
-            return FE_ProcessEnumerable(enumerable, format, end, last_concat_string, exclude_last_end);
+            return FE_ProcessEnumerable(enumerable, format, end, final_pair_separator, exclude_last_end);
         }
 
-        // 處理字典集合
-        private static string FE_ProcessDictionary(IDictionary dictionary, string dictFormat, string keyFormat, string valueFormat, string end, string last_concat_string, bool exclude_last_end)
+        /// <summary>
+        /// 處理字典集合
+        /// </summary>
+        /// <param name="dictionary"> 目標字典 </param>
+        /// <param name="dictFormat"> 字典格式 </param>
+        /// <param name="keyFormat"> 字典的鍵格式 </param>
+        /// <param name="valueFormat"> 字典的值格式 </param>
+        /// <param name="end"> 每次跌代後加的字串(如果是倒數第二個且 final_pair_separator 為空字串，或是最後一個且 exclude_last_end 為 true，則不加) </param>
+        /// <param name="final_pair_separator"> 用於倒數第二個與最後一個項目之間的連接字串 </param>
+        /// <param name="exclude_last_end"> 是否排除最後一個項目的 end 字串 </param>
+        private static string FE_ProcessDictionary(IDictionary dictionary, string dictFormat, string keyFormat, string valueFormat, string end, string final_pair_separator, bool exclude_last_end)
         {
             if (string.IsNullOrEmpty(dictFormat))
                 throw new ArgumentNullException("'dict-format' parameter is required when processing dictionaries.");
@@ -114,11 +134,11 @@ namespace SeanOne.DSL
                 string keyStr = FormatObject(key, keyFormat);
                 string valueStr = FormatObject(value, valueFormat);
 
-                string formatted = string.Format(dictFormat, keyStr, valueStr);
+                string formatted = Dict_Format(dictFormat, keyStr, valueStr);
 
-                // 如果是倒數第二個，且 last_concat_string 不為 null 或空字串
-                if (i == count - 2 && !string.IsNullOrEmpty(last_concat_string))
-                    results.Append(formatted).Append(last_concat_string);
+                // 如果是倒數第二個，且 final_pair_separator 不為 null 或空字串
+                if (i == count - 2 && !string.IsNullOrEmpty(final_pair_separator))
+                    results.Append(formatted).Append(final_pair_separator);
                 // 如果是最後一個，且 exclude_last_end 為 true
                 else if (i == count - 1 && exclude_last_end)
                     results.Append(formatted); // 不加 end
@@ -129,8 +149,15 @@ namespace SeanOne.DSL
             return results.ToString();
         }
 
-        // 處理普通集合
-        private static string FE_ProcessEnumerable(IEnumerable enumerable, string format, string end, string last_concat_string, bool exclude_last_end)
+        /// <summary>
+        /// 處理普通集合
+        /// </summary>
+        /// <param name="enumerable"> 目標集合 </param>
+        /// <param name="format"> 指定集合的格式化方式 </param>
+        /// <param name="end"> 每次跌代後加的字串(如果是倒數第二個且 final_pair_separator 為空字串，或是最後一個且 exclude_last_end 為 true，則不加) </param>
+        /// <param name="final_pair_separator"> 用於倒數第二個與最後一個項目之間的連接字串 </param>
+        /// <param name="exclude_last_end"> 是否排除最後一個項目的 end 字串 </param>
+        private static string FE_ProcessEnumerable(IEnumerable enumerable, string format, string end, string final_pair_separator, bool exclude_last_end)
         {
             var results = new StringBuilder();
 
@@ -143,9 +170,9 @@ namespace SeanOne.DSL
             {
                 string itemString = FormatObject(list[i], format);
 
-                // 如果是倒數第二個，且 last_concat_string 不為 null 或空字串
-                if (i == count - 2 && !string.IsNullOrEmpty(last_concat_string))
-                    results.Append(itemString).Append(last_concat_string);
+                // 如果是倒數第二個，且 final_pair_separator 不為 null 或空字串
+                if (i == count - 2 && !string.IsNullOrEmpty(final_pair_separator))
+                    results.Append(itemString).Append(final_pair_separator);
                 // 如果是最後一個，且 exclude_last_end 為 true
                 else if (i == count - 1 && exclude_last_end)
                     results.Append(itemString); // 不加 end
@@ -158,13 +185,16 @@ namespace SeanOne.DSL
         #endregion
 
         #region Basic Method
-        // 處理單個對象的格式化
+        /// <summary>
+        /// 處理單個對象的格式化 (非同步)
+        /// </summary>
+        /// <param name="obj"> 目標物件 </param>
+        /// <param name="dslInstruction"> Dsl 指令 </param>
         private static string Basic(object obj, string dslInstruction)
         {
-            string end = string.Empty;
             string format = string.Empty;
 
-            end = Get.ParameterValueOrDefault(dslInstruction, "/end:", string.Empty);
+            string end = Get.ParameterValueOrDefault(dslInstruction, "/end:", string.Empty);
 
             // 提取並驗證 /tostring: 參數
             if (Judge.HasString(dslInstruction, "/tostring:"))
@@ -180,15 +210,17 @@ namespace SeanOne.DSL
                 throw new ArgumentException($"Invalid parameters for basic processing: {string.Join(", ", invalidParams)}");
 
             // 格式化對象
-            string result = obj is IFormattable formattable && !string.IsNullOrEmpty(format)
-                ? formattable.ToString(format, null)
-                : obj?.ToString() ?? string.Empty;
+            string result = FormatObject(obj, format);
 
             return result + end;
         }
         #endregion
 
-        // 驗證集合元素是否可格式化
+        /// <summary>
+        /// 驗證集合元素是否可格式化
+        /// </summary>
+        /// <param name="enumerable"> 要檢查的集合 </param>
+        /// <param name="format"> 格式化字串(目前沒用) </param>
         private static void ValidateEnumerableFormattable(IEnumerable enumerable, string format)
         {
             foreach (var element in enumerable)
@@ -201,7 +233,11 @@ namespace SeanOne.DSL
             }
         }
 
-        // 格式化對象 (需支持 IFormattable)
+        /// <summary>
+        /// 格式化對象 (需支持 IFormattable)
+        /// </summary>
+        /// <param name="obj"> 要格式化的對象 </param>
+        /// <param name="format"> 格式化字串 </param>
         private static string FormatObject(object obj, string format)
         {
             // 如果對象為null，返回空字符串
@@ -213,6 +249,36 @@ namespace SeanOne.DSL
 
             // 否則，使用默認的ToString方法
             return obj.ToString() ?? string.Empty;
+        }
+
+        /// <summary>
+        /// 格式化字典
+        /// </summary>
+        /// <param name="format"> 格式化字串 </param>
+        /// <param name="key"> 鍵 </param>
+        /// <param name="value"> 值 </param>
+        private static string Dict_Format(string format, string key, string value)
+        {
+            if (format == null) return string.Empty;
+
+            // 建立一個字典，方便擴充
+            var dict = new Dictionary<string, object>
+            {
+                { "0", key },
+                { "1", value }
+            };
+
+            // 用 Regex 找出 {n} 形式的 placeholder
+            return Regex.Replace(format, @"\{(\d+)\}", m =>
+            {
+                var index = m.Groups[1].Value;
+                if (dict.TryGetValue(index, out var val) && val != null)
+                {
+                    return val.ToString();
+                }
+                // 找不到就原樣返回，不拋錯
+                return m.Value;
+            });
         }
     }
 }
