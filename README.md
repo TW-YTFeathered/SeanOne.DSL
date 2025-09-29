@@ -56,7 +56,7 @@ A lightweight C# library designed for fast and flexible object-to-string formatt
 
 ## More Examples
 
-For more detailed examples and advanced usage, see the [complete guide](https://github.com/TW-YTFeathered/SeanOne.DSL/blob/4511017efc7b8cd55b7d2d4e6f80d40715aa911f/GUIDE.md).
+For more detailed examples and advanced usage, see the [complete guide](https://github.com/TW-YTFeathered/SeanOne.DSL/blob/master/GUIDE.md).
 
 ## License
 
