@@ -170,7 +170,7 @@ using SeanOne.DSL;
 DslFormatter.Format(5, "/tostring:f2 /tostring:F3");
 
 // Correct: Parameter '/tostring:' is specified only once
-DslFormatter.Fomat(5, "/tostring:f2");
+DslFormatter.Format(5, "/tostring:f2");
 // Return: 5.00
 ```
 
