@@ -11,7 +11,7 @@ A lightweight C# library designed for fast and flexible object-to-string formatt
 ### Syntax
 
 ```text
-[FunctionName] /param1:value1 /param2:"value with spaces" /param3:value3 ...
+[FunctionName] /param1:value1 /param2:"value with spaces" /param3:"value/with/slash" ...
 ```
 
 - Parameters start with `/` followed by the name and a colon
