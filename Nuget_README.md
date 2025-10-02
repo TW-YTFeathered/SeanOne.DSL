@@ -27,12 +27,12 @@ DslFormatter.Format(ints, "fe /tostring:F2 /end:\\n /exclude-last-end:true");
 
 ## Documentation
 
-For complete documentation and more examples, see the [README.md](https://github.com/TW-YTFeathered/SeanOne.DSL/blob/master/README.md) file.
-For more code example, see the [GUIDE.md](https://github.com/TW-YTFeathered/SeanOne.DSL/blob/master/GUIDE.md) file.
+For complete documentation and more examples, see the [README.md](https://github.com/TW-YTFeathered/SeanOne.DSL/blob/V1.0.0/README.md) file.
+For more code example, see the [GUIDE.md](https://github.com/TW-YTFeathered/SeanOne.DSL/blob/V1.0.0/GUIDE.md) file.
 
 ## GitHub Repository
 
-[SeanOne.DSL GitHub](https://github.com/TW-YTFeathered/SeanOne.DSL.git)
+[SeanOne.DSL GitHub](https://github.com/TW-YTFeathered/SeanOne.DSL/tree/V1.0.0)
 
 ## License
 
