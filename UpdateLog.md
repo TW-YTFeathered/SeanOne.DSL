@@ -2,6 +2,11 @@
 
 ## **Release**
 
+### V1.0.1
+
+- Corrected NuGet package URLs
+- First published version on NuGet
+
 ### **V1.0.0**
 
 *Focus:Initial release*
