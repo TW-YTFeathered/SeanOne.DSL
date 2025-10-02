@@ -1,1 +1,1 @@
-dotnet pack SeanOne.DSL.csproj -c Release -o ./nupkgs /p:Version=1.0.0
+dotnet pack SeanOne.DSL.csproj -c Release -o ./nupkgs /p:Version=1.0.1
