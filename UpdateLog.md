@@ -2,7 +2,7 @@
 
 ## **Release**
 
-### **V 1.0.0**
+### **V1.0.0**
 
 *Focus:Initial release*
 
