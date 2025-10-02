@@ -1,5 +1,13 @@
 # Update Log
 
+## **Release**
+
+### **V 1.0.0**
+
+*Focus:Initial release*
+
+- Initial release of the DSL formatting tool
+
 ## **Beta**
 
 ### **beta 0.4.0**
