@@ -9,7 +9,7 @@
 - Addressed errors arising from dependence on regular expressions or `string.Format()` by removing reliance on them
 - Fixed the regular expression so that parameters are treated as valid matchable arguments, avoiding errors
 - Converted function comments to a unified XML format
-- Converted permalink to relative URL
+- Converted Markdown permalinks to relative URLs
 
 ### **beta 0.3.0**
 

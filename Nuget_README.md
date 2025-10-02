@@ -11,7 +11,7 @@ List<int> ints = Enumerable.Range(0, 10).ToList();
 
 DslFormatter.Format(ints, "fe /tostring:F2 /end:\\n /exclude-last-end:true");
 
-/* Output:
+/* Return:
 0.00
 1.00
 2.00

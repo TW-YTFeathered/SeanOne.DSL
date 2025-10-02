@@ -23,7 +23,7 @@ A lightweight C# library designed for fast and flexible object-to-string formatt
 | Function Name | Description |
 |---------------|-------------|
 | `fe` or `foreach` | Iterates over an `IEnumerable` or `IDictionary` and lists its contents |
-| `basic`       | Default output method for formatting objects |
+| `basic`       | Default return method for formatting objects |
 
 ### Common Parameters
 
