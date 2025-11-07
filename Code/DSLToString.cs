@@ -17,7 +17,9 @@ namespace SeanOne.DSL
         private static string Decoder(object obj, string dslInstruction)
         {
             // 從 DSL 指令中提取函數名稱
-            string directive = dslInstruction.Contains("/") ? dslInstruction.Substring(0, dslInstruction.IndexOf('/')).Trim() : dslInstruction;
+            string directive = dslInstruction.Contains(DslSymbols.ParamPrefix) ?
+                dslInstruction.Substring(0, dslInstruction.IndexOf(DslSymbols.ParamPrefix)).Trim()
+                : dslInstruction;
 
             // 創建函數名稱字典，映射到對應的執行函數
             Dictionary<string, Func<string>> actions = new Dictionary<string, Func<string>>
@@ -35,8 +37,8 @@ namespace SeanOne.DSL
             }
             else
             {
-                // 如果指令以 '/' 開頭，執行 Basic 方法
-                if (dslInstruction.StartsWith("/"))
+                // 如果指令以 DSL 定義的參數前綴符號（目前為 '/'）開頭，則執行 Basic 方法
+                if (dslInstruction.StartsWith(DslSymbols.ParamPrefix))
                 {
                     return Basic(obj, dslInstruction);
                 }
@@ -65,16 +67,16 @@ namespace SeanOne.DSL
                 throw new ArgumentException($"Object must implement IEnumerable for '{commandName}' directive");
 
             // 提前提取所有參數
-            string end = Get.ParameterValueOrDefault(dslInstruction, "/end:", string.Empty);
-            string final_pair_separator = Get.ParameterValueOrDefault(dslInstruction, "/final-pair-separator:", string.Empty);
-            string format = Get.ParameterValueOrDefault(dslInstruction, "/tostring:", string.Empty);
-            string dictFormat = Get.ParameterValueOrDefault(dslInstruction, "/dict-format:", string.Empty);
-            string keyFormat = Get.ParameterValueOrDefault(dslInstruction, "/key-format:", string.Empty);
-            string valueFormat = Get.ParameterValueOrDefault(dslInstruction, "/value-format:", string.Empty);
+            string end = Get.ParameterValueOrDefault(dslInstruction, DslSyntaxBuilder.BuildParamKey("end"), string.Empty);
+            string final_pair_separator = Get.ParameterValueOrDefault(dslInstruction, DslSyntaxBuilder.BuildParamKey("final-pair-separator"), string.Empty);
+            string format = Get.ParameterValueOrDefault(dslInstruction, DslSyntaxBuilder.BuildParamKey("tostring"), string.Empty);
+            string dictFormat = Get.ParameterValueOrDefault(dslInstruction, DslSyntaxBuilder.BuildParamKey("dict-format"), string.Empty);
+            string keyFormat = Get.ParameterValueOrDefault(dslInstruction, DslSyntaxBuilder.BuildParamKey("key-format"), string.Empty);
+            string valueFormat = Get.ParameterValueOrDefault(dslInstruction, DslSyntaxBuilder.BuildParamKey("value-format"), string.Empty);
 
             // 提取並解析 /exclude-last-end: 參數
             bool exclude_last_end = false;
-            string excludeLastEndValue = Get.ExtractParameterValue(dslInstruction, "/exclude-last-end:");
+            string excludeLastEndValue = Get.ExtractParameterValue(dslInstruction, DslSyntaxBuilder.BuildParamKey("exclude-last-end"));
             if (!string.IsNullOrEmpty(excludeLastEndValue) &&
                 bool.TryParse(excludeLastEndValue, out bool parsedEndPrint))
             {
@@ -194,12 +196,12 @@ namespace SeanOne.DSL
         {
             string format = string.Empty;
 
-            string end = Get.ParameterValueOrDefault(dslInstruction, "/end:", string.Empty);
+            string end = Get.ParameterValueOrDefault(dslInstruction, DslSyntaxBuilder.BuildParamKey("end"), string.Empty);
 
             // 提取並驗證 /tostring: 參數
-            if (Judge.HasString(dslInstruction, "/tostring:"))
+            if (Judge.HasString(dslInstruction, DslSyntaxBuilder.BuildParamKey("tostring")))
             {
-                format = Get.ExtractParameterValue(dslInstruction, "/tostring:");
+                format = Get.ExtractParameterValue(dslInstruction, DslSyntaxBuilder.BuildParamKey("tostring"));
 
                 // 驗證 obj 是否實作 IFormattable
                 if (obj != null && !Judge.SafeToString(obj))
