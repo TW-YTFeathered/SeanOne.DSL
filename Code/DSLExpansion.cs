@@ -21,7 +21,7 @@ namespace SeanOne.DSL
         /// 檢查 fullStr 是否包含 searchStr
         /// </summary>
         /// <param name="fullStr"> 被檢查的字串 </param>
-        /// <paramref name="searchStr"/> 要查找的字串 </param>
+        /// <param name="searchStr"> 要查詢的字串 </param>
         public static bool HasString(string fullStr, string searchStr)
         {
             if (string.IsNullOrWhiteSpace(fullStr) || string.IsNullOrWhiteSpace(searchStr)) // 如果任一字串為空，直接回傳 false
@@ -52,15 +52,11 @@ namespace SeanOne.DSL
             if (string.IsNullOrWhiteSpace(dslInstruction) || string.IsNullOrWhiteSpace(parameterName))
                 return 0;
 
-            // 1. 還原跳脫引號 \" → "
-            string unescaped = dslInstruction.Replace("\\\"", "\"");
+            // 移除所有 \"...\" 之間的內容（非貪婪）
+            string withoutQuotes = Regex.Replace(dslInstruction, "\\\\\".*?\\\\\"", string.Empty);
 
-            // 2. 移除所有雙引號內的內容（允許任何字元，非貪婪）
-            string withoutQuotes = Regex.Replace(unescaped, "\"[^\"]*\"", string.Empty);
-
-            // 3. 使用更精確的模式匹配參數名稱（避免部分匹配）
-            // 確保參數名稱前面是空格或字符串開頭，後面是空白、冒號或字符串結尾
-            string pattern = $@"(?<=^|\s){Regex.Escape(parameterName)}[^\s]*";
+            // 精確匹配參數名稱（前後界限）
+            string pattern = $@"(?<=^|\s){Regex.Escape(parameterName)}(?=\s|:|$)";
             return Regex.Matches(withoutQuotes, pattern).Count;
         }
 
@@ -90,13 +86,10 @@ namespace SeanOne.DSL
 
             var validParams = MethodParameters[methodType];
 
-            // 1. 還原跳脫引號 \" → "
-            string unescaped = dslInstruction.Replace("\\\"", "\"");
+            // 1. 移除所有引號內的內容（允許跳脫字元）
+            string withoutQuotes = Regex.Replace(dslInstruction, "\"(?:\\\\.|[^\"])*\"", string.Empty);
 
-            // 2. 移除所有引號內的內容（允許跳脫字元）
-            string withoutQuotes = Regex.Replace(unescaped, "\"(?:\\\\.|[^\"])*\"", string.Empty);
-
-            // 3. 正則匹配引號外的參數
+            // 2. 正則匹配引號外的參數
             var parameterPattern = @"(?<=/)([\w-]+)(?::([^/\s]*))?";
             var matches = Regex.Matches(withoutQuotes, parameterPattern);
 
@@ -233,17 +226,16 @@ namespace SeanOne.DSL
         /// <param name="startIndex"> 開始查找的位置 </param>
         private static int FindNextTerminator(string dslInstruction, int startIndex)
         {
-            // 從 startIndex 開始尋找下一個空白或 '/' 字元
-            for (int i = startIndex; i < dslInstruction.Length; i++)
-            {
-                char c = dslInstruction[i];
-                // 如果遇到空白或 '/'，則回傳該位置
-                if (char.IsWhiteSpace(c) || c == '/')
-                {
-                    return i;
-                }
-            }
-            return dslInstruction.Length; // 如果沒有找到終止符，則傳回字串的結尾
+            // 如果要查找的位置大於字串本身長度，直接返回字串長度
+            if (startIndex >= dslInstruction.Length)
+                return dslInstruction.Length;
+
+            // 從 startIndex 開始取子字串
+            string sub = dslInstruction.Substring(startIndex);
+
+            // 使用正則尋找第一個空白或 '/'
+            var match = Regex.Match(sub, $@"[\s{Regex.Escape(DslSymbols.ParamPrefix)}]");
+            return match.Success ? startIndex + match.Index : dslInstruction.Length; // 如果沒有找到終止符，則回傳字串的結尾
         }
     }
 
