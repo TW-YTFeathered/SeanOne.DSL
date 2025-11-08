@@ -138,6 +138,8 @@ namespace SeanOne.DSL
                 case FeSeqParam.FinalPairSeparator:
                     _sb.AppendParam("final-pair-separator").AppendQuoted(value);
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(param), param, null);
             }
             return this; // 回傳自己，支援 Fluent DSL
         }
@@ -186,6 +188,8 @@ namespace SeanOne.DSL
                 case FeDictParam.ValueFormat:
                     _sb.AppendParam("value-format").AppendQuoted(value);
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(param), param, null);
             }
             return this; // 回傳自己，支援 Fluent DSL
         }
@@ -221,6 +225,8 @@ namespace SeanOne.DSL
                 case BasicParam.End:
                     _sb.AppendParam("end").AppendQuoted(value);
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(param), param, null);
             }
             return this;
         }
