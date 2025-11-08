@@ -33,9 +33,7 @@ namespace SeanOne.DSL
         /// </summary>
         /// <param name="paramName"> 要建置的字串 </param>
         public static string BuildParamKey(string paramName)
-        {
-            return DslSymbols.ParamPrefix + paramName + DslSymbols.ParamSeparator;
-        }
+            => DslSymbols.ParamPrefix + paramName + DslSymbols.ParamSeparator;
     }
 
     // 建置公開參數
@@ -129,16 +127,16 @@ namespace SeanOne.DSL
             switch (param)
             {
                 case FeSeqParam.End:
-                    _sb.Append(DslSyntaxBuilder.BuildParamKey("end")).AppendQuoted(value);
+                    _sb.AppendParam("end").AppendQuoted(value);
                     break;
                 case FeSeqParam.ExcludeLastEnd:
-                    _sb.Append(DslSyntaxBuilder.BuildParamKey("exclude-last-end")).AppendQuoted(value);
+                    _sb.AppendParam("exclude-last-end").AppendQuoted(value);
                     break;
                 case FeSeqParam.ToString:
-                    _sb.Append(DslSyntaxBuilder.BuildParamKey("tostring")).AppendQuoted(value);
+                    _sb.AppendParam("tostring").AppendQuoted(value);
                     break;
                 case FeSeqParam.FinalPairSeparator:
-                    _sb.Append(DslSyntaxBuilder.BuildParamKey("final-pair-separator")).AppendQuoted(value);
+                    _sb.AppendParam("final-pair-separator").AppendQuoted(value);
                     break;
             }
             return this; // 回傳自己，支援 Fluent DSL
@@ -171,22 +169,22 @@ namespace SeanOne.DSL
             switch (param)
             {
                 case FeDictParam.DictFormat:
-                    _sb.Append(DslSyntaxBuilder.BuildParamKey("dict-format")).AppendQuoted(value);
+                    _sb.AppendParam("dict-format").AppendQuoted(value);
                     break;
                 case FeDictParam.End:
-                    _sb.Append(DslSyntaxBuilder.BuildParamKey("end")).AppendQuoted(value);
+                    _sb.AppendParam("end").AppendQuoted(value);
                     break;
                 case FeDictParam.ExcludeLastEnd:
-                    _sb.Append(DslSyntaxBuilder.BuildParamKey("exclude-last-end")).AppendQuoted(value);
+                    _sb.AppendParam("exclude-last-end").AppendQuoted(value);
                     break;
                 case FeDictParam.FinalPairSeparator:
-                    _sb.Append(DslSyntaxBuilder.BuildParamKey("final-pair-separator")).AppendQuoted(value);
+                    _sb.AppendParam("final-pair-separator").AppendQuoted(value);
                     break;
                 case FeDictParam.KeyFormat:
-                    _sb.Append(DslSyntaxBuilder.BuildParamKey("key-format")).AppendQuoted(value);
+                    _sb.AppendParam("key-format").AppendQuoted(value);
                     break;
                 case FeDictParam.ValueFormat:
-                    _sb.Append(DslSyntaxBuilder.BuildParamKey("value-format")).AppendQuoted(value);
+                    _sb.AppendParam("value-format").AppendQuoted(value);
                     break;
             }
             return this; // 回傳自己，支援 Fluent DSL
@@ -218,10 +216,10 @@ namespace SeanOne.DSL
             switch (param)
             {
                 case BasicParam.ToString:
-                    _sb.Append(DslSyntaxBuilder.BuildParamKey("tostring")).AppendQuoted(value);
+                    _sb.AppendParam("tostring").AppendQuoted(value);
                     break;
                 case BasicParam.End:
-                    _sb.Append(DslSyntaxBuilder.BuildParamKey("end")).AppendQuoted(value);
+                    _sb.AppendParam("end").AppendQuoted(value);
                     break;
             }
             return this;
