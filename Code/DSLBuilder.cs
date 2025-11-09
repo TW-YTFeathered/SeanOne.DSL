@@ -31,6 +31,7 @@ namespace SeanOne.DSL
             Basic
         }
 
+        /*
         /// <summary>
         /// Generic factory method to select a DSL function based on the specified function name.
         /// </summary>
@@ -51,6 +52,7 @@ namespace SeanOne.DSL
                     throw new ArgumentOutOfRangeException(nameof(funcName), funcName, null);
             }
         }
+        */
 
         /// <summary>
         /// Creates an instance of the <see cref="BasicFunc"/> class.
