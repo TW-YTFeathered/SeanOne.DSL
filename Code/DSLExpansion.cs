@@ -6,6 +6,9 @@ using System.Text.RegularExpressions;
 
 namespace SeanOne.DSL
 {
+    /// <summary>
+    /// 判斷 DSL 條件
+    /// </summary>
     internal static class Judge
     {
         /// <summary>
@@ -149,6 +152,9 @@ namespace SeanOne.DSL
         }
     }
 
+    /// <summary>
+    /// 取得 DSL 指令的值
+    /// </summary>
     internal static class Get
     {
         /// <summary>
@@ -239,6 +245,10 @@ namespace SeanOne.DSL
         }
     }
 
+    /// <summary>
+    /// 將指定輸入轉換成 Unicode 值
+    /// 注意：部分情況直接使用 C# 數值轉換更快更準，可能看似非標準 Unicode
+    /// </summary>
     internal static class ConvertToUnicode
     {
         /// <summary>

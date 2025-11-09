@@ -18,9 +18,7 @@ namespace SeanOne.DSL
         /// A DSL (domain-specific language) instruction string that defines the formatting rules.
         /// Must not be <c>null</c> or empty.
         /// </param>
-        /// <returns>
-        /// Returns the formatted string.
-        /// </returns>
+        /// <returns> Returns the formatted string. </returns>
         public static string Format(object obj, string dslInstruction)
         {
             // 檢查 物件 是否是 null
@@ -45,9 +43,7 @@ namespace SeanOne.DSL
         /// A DSL (domain-specific language) instruction string that defines the formatting rules.
         /// Must not be <c>null</c> or empty.
         /// </param>
-        /// <returns>
-        /// A task that represents the asynchronous operation. The task result contains the formatted string.
-        /// </returns>
+        /// <returns> A task that represents the asynchronous operation. The task result contains the formatted string. </returns>
         public static async Task<string> FormatAsync(object obj, string dslInstruction)
         {
             // 檢查 物件 是否是 null
