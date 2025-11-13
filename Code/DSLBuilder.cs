@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace SeanOne.DSL
+namespace SeanOne.DSL.Builder
 {
     /// <summary>
     /// Provides methods to initialize and build DSL functions.
