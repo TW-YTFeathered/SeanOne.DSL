@@ -8,6 +8,7 @@ namespace SeanOne.DSL
     /// </summary>
     public class DslFormatBuilder
     {
+        /*
         /// <summary>
         /// Represents the available function types.
         /// Note: FeSequence and FeDictionary are distinguished at the enum level,
@@ -30,6 +31,7 @@ namespace SeanOne.DSL
             /// </summary>
             Basic
         }
+        */
 
         /*
         /// <summary>
